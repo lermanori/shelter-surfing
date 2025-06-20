@@ -55,7 +55,8 @@ app.use(helmet());
 
 // Set up allowed origins for CORS
 const allowedOrigins = [
-  'http://localhost:5173', // Development frontend
+  'http://localhost:5173', // Original development frontend
+  'http://localhost:3000', // New development frontend
 ];
 
 if (process.env.CLIENT_URL) {
