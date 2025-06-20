@@ -62,14 +62,22 @@ if (process.env.CLIENT_URL) {
   allowedOrigins.push(process.env.CLIENT_URL);
 }
 
+// Debug logging
+console.log('🔧 CORS Configuration:');
+console.log('   CLIENT_URL:', process.env.CLIENT_URL);
+console.log('   Allowed origins:', allowedOrigins);
+
 app.use(cors({
   origin: (origin, callback) => {
+    console.log('🌐 CORS request from origin:', origin);
     // allow requests with no origin (like mobile apps or curl requests)
     if (!origin) return callback(null, true);
     if (allowedOrigins.indexOf(origin) === -1) {
+      console.log('❌ CORS blocked origin:', origin);
       const msg = 'The CORS policy for this site does not allow access from the specified Origin.';
       return callback(new Error(msg), false);
     }
+    console.log('✅ CORS allowed origin:', origin);
     return callback(null, true);
   },
   credentials: true
