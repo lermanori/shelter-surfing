@@ -17,7 +17,7 @@ const ShelterEditPage = () => {
 
   const fetchShelter = async () => {
     try {
-      const response = await fetch(`http://localhost:3000/api/shelters/${shelterId}`, {
+      const response = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:3000'}/api/shelters/${shelterId}`, {
         headers: {
           'Authorization': `Bearer ${token}`
         }
@@ -41,7 +41,7 @@ const ShelterEditPage = () => {
 
   const handleSubmit = async (formData) => {
     try {
-      const response = await fetch(`http://localhost:3000/api/shelters/${shelterId}`, {
+      const response = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:3000'}/api/shelters/${shelterId}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',

@@ -10,7 +10,7 @@ const ShelterFormPage = () => {
 
   const handleSubmit = async (formData) => {
     try {
-      const response = await fetch('http://localhost:3000/api/shelters', {
+      const response = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:3000'}/api/shelters`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

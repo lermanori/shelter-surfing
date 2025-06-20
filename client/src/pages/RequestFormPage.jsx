@@ -66,7 +66,7 @@ const RequestFormPage = () => {
         requestData.longitude = locationData.longitude;
       }
 
-      const response = await fetch('http://localhost:3000/api/requests', {
+      const response = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:3000'}/api/requests`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

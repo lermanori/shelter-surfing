@@ -31,7 +31,7 @@ const RequestEditPage = () => {
 
   const fetchRequest = async () => {
     try {
-      const response = await fetch(`http://localhost:3000/api/requests/${requestId}`, {
+      const response = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:3000'}/api/requests/${requestId}`, {
         headers: {
           'Authorization': `Bearer ${token}`
         }
@@ -84,7 +84,7 @@ const RequestEditPage = () => {
     setError('');
 
     try {
-      const response = await fetch(`http://localhost:3000/api/requests/${requestId}`, {
+      const response = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:3000'}/api/requests/${requestId}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',

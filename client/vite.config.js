@@ -6,6 +6,7 @@ import { VitePWA } from 'vite-plugin-pwa'
 
 // https://vite.dev/config/
 export default defineConfig({
+  base: '/shelter-surfing/',
   plugins: [
     react(),
     tailwindcss(),
@@ -41,7 +42,6 @@ export default defineConfig({
       output: {
         manualChunks: {
           'react-vendor': ['react', 'react-dom', 'react-router-dom'],
-          'ui-vendor': ['@headlessui/react', '@heroicons/react'],
           'form-vendor': ['react-hook-form', 'yup'],
           'map-vendor': ['leaflet', 'react-leaflet']
         }

@@ -28,7 +28,7 @@ const DashboardPage = () => {
 
   const fetchHostShelters = async () => {
     try {
-      const response = await fetch('http://localhost:3000/api/shelters/host/my-shelters', {
+      const response = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:3000'}/api/shelters/host/my-shelters`, {
         headers: {
           'Authorization': `Bearer ${token}`
         }
@@ -50,7 +50,7 @@ const DashboardPage = () => {
 
   const fetchSeekerRequests = async () => {
     try {
-      const response = await fetch('http://localhost:3000/api/requests/seeker/my-requests', {
+      const response = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:3000'}/api/requests/seeker/my-requests`, {
         headers: {
           'Authorization': `Bearer ${token}`
         }
@@ -76,7 +76,7 @@ const DashboardPage = () => {
     }
 
     try {
-      const response = await fetch(`http://localhost:3000/api/shelters/${shelterId}`, {
+      const response = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:3000'}/api/shelters/${shelterId}`, {
         method: 'DELETE',
         headers: {
           'Authorization': `Bearer ${token}`
@@ -101,7 +101,7 @@ const DashboardPage = () => {
     }
 
     try {
-      const response = await fetch(`http://localhost:3000/api/requests/${requestId}`, {
+      const response = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:3000'}/api/requests/${requestId}`, {
         method: 'DELETE',
         headers: {
           'Authorization': `Bearer ${token}`
