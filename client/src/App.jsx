@@ -1,4 +1,4 @@
-import { HashRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { HashRouter as Router, Routes, Route, Navigate, Link } from 'react-router-dom';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { SocketProvider } from './context/SocketContext';
 import { useEffect } from 'react';
@@ -74,18 +74,18 @@ const LandingPage = () => {
 
         {/* Action Buttons */}
         <div className="space-y-3">
-          <a 
-            href="/login"
+          <Link 
+            to="/login"
             className="block w-full bg-blue-600 text-white py-3 px-4 rounded-lg hover:bg-blue-700 transition-colors font-medium"
           >
             Sign In
-          </a>
-          <a 
-            href="/register"
+          </Link>
+          <Link 
+            to="/register"
             className="block w-full bg-white text-blue-600 py-3 px-4 rounded-lg border-2 border-blue-600 hover:bg-blue-50 transition-colors font-medium"
           >
             Create Account
-          </a>
+          </Link>
         </div>
 
         {/* Footer */}
