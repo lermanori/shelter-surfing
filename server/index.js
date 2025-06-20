@@ -25,6 +25,10 @@ const server = createServer(app);
 const prisma = new PrismaClient();
 const PORT = process.env.PORT || 3001;
 
+// Trust the first proxy in front of the app (e.g., Railway's load balancer)
+// This is required for express-rate-limit to work correctly.
+app.set('trust proxy', 1);
+
 // Initialize Socket.IO
 socketService.initialize(server);
 
@@ -48,10 +52,29 @@ const limiter = rateLimit({
 
 // Middleware
 app.use(helmet());
+
+// Set up allowed origins for CORS
+const allowedOrigins = [
+  'http://localhost:5173', // Development frontend
+];
+
+if (process.env.CLIENT_URL) {
+  allowedOrigins.push(process.env.CLIENT_URL);
+}
+
 app.use(cors({
-  origin: process.env.CLIENT_URL || 'http://localhost:5173',
+  origin: (origin, callback) => {
+    // allow requests with no origin (like mobile apps or curl requests)
+    if (!origin) return callback(null, true);
+    if (allowedOrigins.indexOf(origin) === -1) {
+      const msg = 'The CORS policy for this site does not allow access from the specified Origin.';
+      return callback(new Error(msg), false);
+    }
+    return callback(null, true);
+  },
   credentials: true
 }));
+
 app.use(limiter);
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
