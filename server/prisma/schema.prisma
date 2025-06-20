@@ -1,0 +1,135 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            String    @id @default(cuid())
+  email         String    @unique
+  password      String
+  name          String
+  role          UserRole  @default(SEEKER)
+  locationInput String?
+  latitude      Float?
+  longitude     Float?
+  profileImage1 String?   // URL to first profile image
+  profileImage2 String?   // URL to second profile image
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  // Relations
+  shelters      Shelter[] // Host's shelters
+  requests      Request[] // Seeker's requests
+  sentMessages     Message[] @relation("SentMessages")
+  receivedMessages Message[] @relation("ReceivedMessages")
+  sentConnections     Connection[] @relation("SentConnections")
+  receivedConnections Connection[] @relation("ReceivedConnections")
+
+  @@map("users")
+}
+
+model Shelter {
+  id            String    @id @default(cuid())
+  hostId        String
+  title         String
+  description   String?
+  locationInput String
+  latitude      Float
+  longitude     Float
+  image1        String?   // URL to first shelter image
+  image2        String?   // URL to second shelter image
+  availableFrom DateTime
+  availableTo   DateTime?
+  capacity      Int
+  tags          String[]  // Array of tags like ["pet-friendly", "wheelchair-accessible"]
+  isActive      Boolean   @default(true)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  // Relations
+  host          User      @relation(fields: [hostId], references: [id], onDelete: Cascade)
+
+  @@map("shelters")
+}
+
+model Request {
+  id            String        @id @default(cuid())
+  seekerId      String
+  locationInput String
+  latitude      Float
+  longitude     Float
+  date          DateTime
+  numberOfPeople Int
+  description   String?
+  status        RequestStatus @default(PENDING)
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+
+  // Relations
+  seeker        User          @relation(fields: [seekerId], references: [id], onDelete: Cascade)
+
+  @@map("requests")
+}
+
+model Message {
+  id             String   @id @default(cuid())
+  senderId       String
+  recipientId    String
+  text           String
+  conversationId String   // Group messages by conversation
+  isRead         Boolean  @default(false)
+  createdAt      DateTime @default(now())
+
+  // Relations
+  sender         User     @relation("SentMessages", fields: [senderId], references: [id], onDelete: Cascade)
+  recipient      User     @relation("ReceivedMessages", fields: [recipientId], references: [id], onDelete: Cascade)
+
+  @@map("messages")
+}
+
+model Connection {
+  id          String           @id @default(cuid())
+  requesterId String
+  recipientId String
+  status      ConnectionStatus @default(PENDING)
+  message     String?          // Optional message with the request
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime         @updatedAt
+
+  // Relations
+  requester   User             @relation("SentConnections", fields: [requesterId], references: [id], onDelete: Cascade)
+  recipient   User             @relation("ReceivedConnections", fields: [recipientId], references: [id], onDelete: Cascade)
+
+  // Ensure unique connection requests
+  @@unique([requesterId, recipientId])
+  @@map("connections")
+}
+
+enum UserRole {
+  HOST
+  SEEKER
+  ADMIN
+}
+
+enum RequestStatus {
+  PENDING
+  APPROVED
+  REJECTED
+  COMPLETED
+}
+
+enum ConnectionStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}

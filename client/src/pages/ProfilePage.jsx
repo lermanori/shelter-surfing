@@ -1,0 +1,475 @@
+import { useState, useEffect } from 'react';
+import { useAuth } from '../context/AuthContext';
+import { useForm } from 'react-hook-form';
+import { yupResolver } from '@hookform/resolvers/yup';
+import * as yup from 'yup';
+import { useNavigate } from 'react-router-dom';
+import InputField from '../components/InputField';
+import SelectField from '../components/SelectField';
+import Button from '../components/Button';
+import LocationInput from '../components/LocationInput';
+import ImageUpload from '../components/ImageUpload';
+import { uploadProfileImage } from '../services/imageService';
+
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
+
+const profileSchema = yup.object({
+  name: yup.string().min(2, 'Name must be at least 2 characters').required('Name is required'),
+  email: yup.string().email('Invalid email format').required('Email is required'),
+  locationInput: yup.string().required('Location is required'),
+  role: yup.string().oneOf(['HOST', 'SEEKER'], 'Please select a valid role').required('Role is required'),
+}).required();
+
+const ProfilePage = () => {
+  const { user, token, updateUser } = useAuth();
+  const navigate = useNavigate();
+  const [isLoading, setIsLoading] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
+  const [error, setError] = useState('');
+  const [success, setSuccess] = useState('');
+  const [locationData, setLocationData] = useState(null);
+  const [formData, setFormData] = useState({
+    name: user?.name || '',
+    email: user?.email || '',
+    locationInput: user?.locationInput || '',
+    role: user?.role || 'SEEKER',
+    latitude: user?.latitude || null,
+    longitude: user?.longitude || null,
+  });
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    reset,
+    setValue,
+    watch
+  } = useForm({
+    resolver: yupResolver(profileSchema),
+    defaultValues: {
+      name: user?.name || '',
+      email: user?.email || '',
+      locationInput: user?.locationInput || '',
+      role: user?.role || 'SEEKER'
+    }
+  });
+
+  const selectedRole = watch('role');
+
+  useEffect(() => {
+    if (user) {
+      reset({
+        name: user.name,
+        email: user.email,
+        locationInput: user.locationInput || '',
+        role: user.role
+      });
+    }
+  }, [user, reset]);
+
+  useEffect(() => {
+    if (!user) {
+      navigate('/login');
+    }
+  }, [user, navigate]);
+
+  const handleLocationSelect = (locationInfo) => {
+    setLocationData(locationInfo);
+    if (locationInfo) {
+      setValue('locationInput', locationInfo.locationInput);
+      // If we have GPS coordinates from the location info, store them
+      if (locationInfo.source === 'gps' && locationInfo.latitude && locationInfo.longitude) {
+        setLocationData({
+          latitude: locationInfo.latitude,
+          longitude: locationInfo.longitude,
+          locationInput: locationInfo.locationInput
+        });
+      }
+    }
+  };
+
+  const handleImageUpload = async (file, imageNum) => {
+    try {
+      const { url } = await uploadProfileImage(file, imageNum);
+      // Update local state and context with complete user object
+      const updatedUser = {
+        ...user,
+        [`profileImage${imageNum}`]: url
+      };
+      updateUser(updatedUser);
+    } catch (error) {
+      console.error('Error uploading image:', error);
+      setError('Failed to upload image');
+    }
+  };
+
+  const handleUpdateProfile = async (formData) => {
+    setIsLoading(true);
+    setError('');
+
+    try {
+      // Prepare location data for backend
+      const profileData = {
+        name: formData.name,
+        email: formData.email,
+        locationInput: formData.locationInput,
+        role: formData.role
+      };
+
+      // If we have GPS coordinates, include them
+      if (locationData?.latitude && locationData?.longitude) {
+        profileData.latitude = locationData.latitude;
+        profileData.longitude = locationData.longitude;
+      }
+
+      const response = await fetch(`${API_BASE_URL}/api/users/profile`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify(profileData)
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Failed to update profile');
+      }
+
+      // Update the user context with new data
+      if (data.user) {
+        updateUser(data.user);
+      }
+
+      setSuccess('Profile updated successfully!');
+      setIsEditing(false);
+      
+      // Clear success message after 3 seconds
+      setTimeout(() => setSuccess(''), 3000);
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleCancel = () => {
+    reset({
+      name: user.name,
+      email: user.email,
+      locationInput: user.locationInput || '',
+      role: user.role
+    });
+    setIsEditing(false);
+    setError('');
+    setSuccess('');
+    setLocationData(null);
+  };
+
+  const formatDate = (dateString) => {
+    return new Date(dateString).toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric'
+    });
+  };
+
+  if (!user) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
+          <p className="mt-4 text-gray-600">Loading profile...</p>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="min-h-screen bg-gray-50">
+      <div className="max-w-4xl mx-auto py-6 sm:px-6 lg:px-8">
+        {/* Header */}
+        <div className="px-4 py-6 sm:px-0">
+          <div className="flex items-center justify-between">
+            <div>
+              <h1 className="text-3xl font-bold text-gray-900">Profile</h1>
+              <p className="mt-2 text-gray-600">
+                Manage your account information and preferences
+              </p>
+            </div>
+            <button
+              onClick={() => navigate('/dashboard')}
+              className="text-blue-600 hover:text-blue-700 font-medium"
+            >
+              ← Back to Dashboard
+            </button>
+          </div>
+        </div>
+
+        <div className="px-4 sm:px-0">
+          {/* Success/Error Messages */}
+          {success && (
+            <div className="mb-6 bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded-md">
+              {success}
+            </div>
+          )}
+          {error && (
+            <div className="mb-6 bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-md">
+              {error}
+            </div>
+          )}
+
+          <div className="bg-white shadow rounded-lg">
+            {/* Profile Header */}
+            <div className="px-6 py-4 border-b border-gray-200">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center space-x-4">
+                  {(user?.profileImage1 || user?.profileImage2) ? (
+                    <div className="flex space-x-2">
+                      {user?.profileImage1 && (
+                        <div className="w-16 h-16 rounded-full overflow-hidden">
+                          <img
+                            src={user.profileImage1}
+                            alt="Profile 1"
+                            className="w-full h-full object-cover"
+                          />
+                        </div>
+                      )}
+                      {user?.profileImage2 && (
+                        <div className="w-16 h-16 rounded-full overflow-hidden">
+                          <img
+                            src={user.profileImage2}
+                            alt="Profile 2"
+                            className="w-full h-full object-cover"
+                          />
+                        </div>
+                      )}
+                    </div>
+                  ) : (
+                    <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center">
+                      <span className="text-2xl font-bold text-blue-600">
+                        {user?.name?.charAt(0).toUpperCase()}
+                      </span>
+                    </div>
+                  )}
+                  <div>
+                    <h2 className="text-xl font-semibold text-gray-900">{user?.name}</h2>
+                    <p className="text-gray-600">{user?.email}</p>
+                  </div>
+                </div>
+                <div className="flex items-center space-x-3">
+                  <span className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${
+                    user?.role === 'HOST' 
+                      ? 'bg-green-100 text-green-800' 
+                      : 'bg-blue-100 text-blue-800'
+                  }`}>
+                    {user?.role}
+                  </span>
+                  {!isEditing && (
+                    <button
+                      onClick={() => setIsEditing(true)}
+                      className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                    >
+                      Edit Profile
+                    </button>
+                  )}
+                </div>
+              </div>
+            </div>
+
+            {/* Profile Content */}
+            <div className="p-6">
+              {isEditing ? (
+                <form onSubmit={handleSubmit(handleUpdateProfile)} className="space-y-6">
+                  {/* Profile Images */}
+                  <div>
+                    <h3 className="text-lg font-medium text-gray-900 mb-4">Profile Images</h3>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      <ImageUpload
+                        label="Profile Image 1"
+                        currentImage={user?.profileImage1}
+                        onImageSelect={(file) => handleImageUpload(file, 1)}
+                      />
+                      <ImageUpload
+                        label="Profile Image 2"
+                        currentImage={user?.profileImage2}
+                        onImageSelect={(file) => handleImageUpload(file, 2)}
+                      />
+                    </div>
+                  </div>
+
+                  <InputField
+                    label="Full Name"
+                    name="name"
+                    type="text"
+                    {...register('name')}
+                    error={errors.name?.message}
+                    disabled={isLoading}
+                    required
+                  />
+                  <InputField
+                    label="Email Address"
+                    name="email"
+                    type="email"
+                    {...register('email')}
+                    error={errors.email?.message}
+                    disabled={isLoading}
+                    required
+                  />
+                  
+                  {/* Location Input with GPS and Israeli locations */}
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Location <span className="text-red-500">*</span>
+                    </label>
+                    <LocationInput
+                      value={watch('locationInput')}
+                      onChange={(value) => setValue('locationInput', value)}
+                      onLocationSelect={handleLocationSelect}
+                      placeholder="Enter your location or use GPS to get your current location"
+                      disabled={isLoading}
+                      required
+                    />
+                    {errors.locationInput && (
+                      <p className="mt-1 text-sm text-red-600">{errors.locationInput.message}</p>
+                    )}
+                  </div>
+
+                  <SelectField
+                    label="Account Type"
+                    name="role"
+                    value={watch('role')}
+                    onChange={e => setValue('role', e.target.value)}
+                    options={[
+                      { value: 'SEEKER', label: 'Seeker (I need shelter)' },
+                      { value: 'HOST', label: 'Host (I can offer shelter)' }
+                    ]}
+                    error={errors.role?.message}
+                    disabled={isLoading}
+                    required
+                  />
+                  
+                  {/* Action Buttons */}
+                  <div className="flex justify-end space-x-3">
+                    <Button
+                      type="button"
+                      variant="outline"
+                      onClick={handleCancel}
+                      disabled={isLoading}
+                    >
+                      Cancel
+                    </Button>
+                    <Button
+                      type="submit"
+                      loading={isLoading}
+                      variant="primary"
+                    >
+                      Save Changes
+                    </Button>
+                  </div>
+                </form>
+              ) : (
+                <div className="space-y-6">
+                  {/* Profile Images Display */}
+                  {(user?.profileImage1 || user?.profileImage2) && (
+                    <div>
+                      <h3 className="text-lg font-medium text-gray-900 mb-4">Profile Images</h3>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        {user?.profileImage1 && (
+                          <div>
+                            <label className="block text-sm font-medium text-gray-500 mb-2">Profile Image 1</label>
+                            <img
+                              src={user.profileImage1}
+                              alt="Profile 1"
+                              className="w-32 h-32 object-cover rounded-lg"
+                            />
+                          </div>
+                        )}
+                        {user?.profileImage2 && (
+                          <div>
+                            <label className="block text-sm font-medium text-gray-500 mb-2">Profile Image 2</label>
+                            <img
+                              src={user.profileImage2}
+                              alt="Profile 2"
+                              className="w-32 h-32 object-cover rounded-lg"
+                            />
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Account Information */}
+                  <div>
+                    <h3 className="text-lg font-medium text-gray-900 mb-4">Account Information</h3>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      <div>
+                        <label className="block text-sm font-medium text-gray-500 mb-1">Full Name</label>
+                        <p className="text-gray-900">{user?.name}</p>
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium text-gray-500 mb-1">Email Address</label>
+                        <p className="text-gray-900">{user?.email}</p>
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium text-gray-500 mb-1">Location</label>
+                        <p className="text-gray-900">{user?.locationInput || 'Not specified'}</p>
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium text-gray-500 mb-1">Account Type</label>
+                        <p className="text-gray-900">{user?.role}</p>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Account Details */}
+                  <div>
+                    <h3 className="text-lg font-medium text-gray-900 mb-4">Account Details</h3>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      <div>
+                        <label className="block text-sm font-medium text-gray-500 mb-1">Member Since</label>
+                        <p className="text-gray-900">{formatDate(user?.createdAt)}</p>
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium text-gray-500 mb-1">Last Updated</label>
+                        <p className="text-gray-900">{formatDate(user?.updatedAt)}</p>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Role-specific Information */}
+                  {user?.role === 'HOST' && (
+                    <div>
+                      <h3 className="text-lg font-medium text-gray-900 mb-4">Host Information</h3>
+                      <div className="bg-blue-50 border border-blue-200 rounded-md p-4">
+                        <p className="text-blue-800">
+                          As a host, you can offer temporary shelter to people in need. 
+                          You'll be able to create shelter listings and manage requests from seekers.
+                        </p>
+                      </div>
+                    </div>
+                  )}
+
+                  {user?.role === 'SEEKER' && (
+                    <div>
+                      <h3 className="text-lg font-medium text-gray-900 mb-4">Seeker Information</h3>
+                      <div className="bg-green-50 border border-green-200 rounded-md p-4">
+                        <p className="text-green-800">
+                          As a seeker, you can browse available shelters and submit requests for help 
+                          when you need temporary accommodation.
+                        </p>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default ProfilePage; 
