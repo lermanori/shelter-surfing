@@ -24,14 +24,14 @@ COPY ./server ./server
 # Change the working directory to the server app
 WORKDIR /app/server
 
+# Make the startup script executable
+RUN chmod +x start.sh
+
 # Generate Prisma client (schema path is relative to the new WORKDIR)
 RUN npx prisma generate
-
-# Run database migrations
-RUN npx prisma migrate deploy
 
 # Expose the port the server will run on
 EXPOSE 3000
 
-# Start the server using the start script in server/package.json
-CMD ["npm", "start"] 
+# Start the server using the startup script
+CMD ["./start.sh"] 
