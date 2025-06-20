@@ -1,5 +1,5 @@
 # Use Node.js LTS version
-FROM node:18-alpine
+FROM node:18-slim
 
 # Set working directory for the entire monorepo
 WORKDIR /app
