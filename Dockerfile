@@ -4,6 +4,9 @@ FROM node:18-slim
 # Set working directory for the entire monorepo
 WORKDIR /app
 
+# Install OpenSSL, a required dependency for Prisma
+RUN apt-get update -y && apt-get install -y openssl
+
 # Copy root dependency manifests
 COPY package.json package-lock.json* ./
 
