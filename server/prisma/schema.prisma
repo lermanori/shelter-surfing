@@ -24,6 +24,14 @@ model User {
   longitude     Float?
   profileImage1 String?   // URL to first profile image
   profileImage2 String?   // URL to second profile image
+  // Social Media Links
+  facebook      String?   // Facebook profile URL
+  instagram     String?   // Instagram profile URL
+  twitter       String?   // Twitter/X profile URL
+  linkedin      String?   // LinkedIn profile URL
+  whatsapp      String?   // WhatsApp number
+  telegram      String?   // Telegram username
+  website       String?   // Personal website URL
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
 

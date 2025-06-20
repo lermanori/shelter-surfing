@@ -86,7 +86,21 @@ const geocodeAddress = async (address, latitude = null, longitude = null) => {
 export const updateProfile = async (req, res) => {
   try {
     const userId = req.userId;
-    const { name, email, locationInput, latitude, longitude, role } = req.body;
+    const { 
+      name, 
+      email, 
+      locationInput, 
+      latitude, 
+      longitude, 
+      role,
+      facebook,
+      instagram,
+      twitter,
+      linkedin,
+      whatsapp,
+      telegram,
+      website
+    } = req.body;
 
     console.log('Updating profile with data:', {
       name,
@@ -95,6 +109,13 @@ export const updateProfile = async (req, res) => {
       latitude,
       longitude,
       role,
+      facebook,
+      instagram,
+      twitter,
+      linkedin,
+      whatsapp,
+      telegram,
+      website,
       userId
     });
 
@@ -133,7 +154,15 @@ export const updateProfile = async (req, res) => {
         locationInput,
         latitude: coordinates.lat,
         longitude: coordinates.lng,
-        ...(role && { role: role.toUpperCase() })
+        ...(role && { role: role.toUpperCase() }),
+        // Social media fields
+        ...(facebook !== undefined && { facebook }),
+        ...(instagram !== undefined && { instagram }),
+        ...(twitter !== undefined && { twitter }),
+        ...(linkedin !== undefined && { linkedin }),
+        ...(whatsapp !== undefined && { whatsapp }),
+        ...(telegram !== undefined && { telegram }),
+        ...(website !== undefined && { website })
       },
       select: {
         id: true,
@@ -145,6 +174,13 @@ export const updateProfile = async (req, res) => {
         longitude: true,
         profileImage1: true,
         profileImage2: true,
+        facebook: true,
+        instagram: true,
+        twitter: true,
+        linkedin: true,
+        whatsapp: true,
+        telegram: true,
+        website: true,
         createdAt: true,
         updatedAt: true
       }
@@ -260,6 +296,13 @@ export const getProfile = async (req, res) => {
         longitude: true,
         profileImage1: true,
         profileImage2: true,
+        facebook: true,
+        instagram: true,
+        twitter: true,
+        linkedin: true,
+        whatsapp: true,
+        telegram: true,
+        website: true,
         createdAt: true,
         updatedAt: true
       }

@@ -10,6 +10,7 @@ import Button from '../components/Button';
 import LocationInput from '../components/LocationInput';
 import ImageUpload from '../components/ImageUpload';
 import { uploadProfileImage } from '../services/imageService';
+import SocialMediaInput from '../components/SocialMediaInput';
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
 
@@ -20,6 +21,16 @@ const profileSchema = yup.object({
   role: yup.string().oneOf(['HOST', 'SEEKER'], 'Please select a valid role').required('Role is required'),
 }).required();
 
+const socialFields = [
+  { name: 'facebook', label: 'Facebook', icon: '📘', placeholder: 'Facebook profile URL' },
+  { name: 'instagram', label: 'Instagram', icon: '📸', placeholder: 'Instagram profile URL' },
+  { name: 'twitter', label: 'Twitter/X', icon: '🐦', placeholder: 'Twitter/X profile URL' },
+  { name: 'linkedin', label: 'LinkedIn', icon: '💼', placeholder: 'LinkedIn profile URL' },
+  { name: 'whatsapp', label: 'WhatsApp', icon: '💬', placeholder: 'WhatsApp number' },
+  { name: 'telegram', label: 'Telegram', icon: '✈️', placeholder: 'Telegram username' },
+  { name: 'website', label: 'Website', icon: '🌐', placeholder: 'Personal website URL' },
+];
+
 const ProfilePage = () => {
   const { user, token, updateUser } = useAuth();
   const navigate = useNavigate();
@@ -28,6 +39,15 @@ const ProfilePage = () => {
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
   const [locationData, setLocationData] = useState(null);
+  const [socialLinks, setSocialLinks] = useState({
+    facebook: user?.facebook || '',
+    instagram: user?.instagram || '',
+    twitter: user?.twitter || '',
+    linkedin: user?.linkedin || '',
+    whatsapp: user?.whatsapp || '',
+    telegram: user?.telegram || '',
+    website: user?.website || '',
+  });
   const [formData, setFormData] = useState({
     name: user?.name || '',
     email: user?.email || '',
@@ -63,6 +83,15 @@ const ProfilePage = () => {
         email: user.email,
         locationInput: user.locationInput || '',
         role: user.role
+      });
+      setSocialLinks({
+        facebook: user?.facebook || '',
+        instagram: user?.instagram || '',
+        twitter: user?.twitter || '',
+        linkedin: user?.linkedin || '',
+        whatsapp: user?.whatsapp || '',
+        telegram: user?.telegram || '',
+        website: user?.website || '',
       });
     }
   }, [user, reset]);
@@ -113,7 +142,8 @@ const ProfilePage = () => {
         name: formData.name,
         email: formData.email,
         locationInput: formData.locationInput,
-        role: formData.role
+        role: formData.role,
+        ...socialLinks
       };
 
       // If we have GPS coordinates, include them
@@ -350,6 +380,25 @@ const ProfilePage = () => {
                     required
                   />
                   
+                  {/* Social Media Links */}
+                  <div>
+                    <h3 className="text-lg font-medium text-gray-900 mb-4">Social Media Links</h3>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-4">
+                      {socialFields.map(field => (
+                        <SocialMediaInput
+                          key={field.name}
+                          label={field.label}
+                          name={field.name}
+                          value={socialLinks[field.name]}
+                          onChange={(name, value) => setSocialLinks(prev => ({ ...prev, [name]: value }))}
+                          placeholder={field.placeholder}
+                          icon={field.icon}
+                          disabled={isLoading}
+                        />
+                      ))}
+                    </div>
+                  </div>
+
                   {/* Action Buttons */}
                   <div className="flex justify-end space-x-3">
                     <Button
@@ -459,6 +508,50 @@ const ProfilePage = () => {
                           As a seeker, you can browse available shelters and submit requests for help 
                           when you need temporary accommodation.
                         </p>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Social Media Links */}
+                  {(user?.facebook || user?.instagram || user?.twitter || user?.linkedin || user?.whatsapp || user?.telegram || user?.website) && (
+                    <div>
+                      <h3 className="text-lg font-medium text-gray-900 mb-4">Social Media</h3>
+                      <div className="flex flex-wrap gap-4 items-center">
+                        {user?.facebook && (
+                          <a href={user.facebook} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1 text-blue-600 hover:underline">
+                            <span role="img" aria-label="Facebook">📘</span> Facebook
+                          </a>
+                        )}
+                        {user?.instagram && (
+                          <a href={user.instagram} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1 text-pink-500 hover:underline">
+                            <span role="img" aria-label="Instagram">📸</span> Instagram
+                          </a>
+                        )}
+                        {user?.twitter && (
+                          <a href={user.twitter} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1 text-blue-400 hover:underline">
+                            <span role="img" aria-label="Twitter">🐦</span> Twitter/X
+                          </a>
+                        )}
+                        {user?.linkedin && (
+                          <a href={user.linkedin} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1 text-blue-700 hover:underline">
+                            <span role="img" aria-label="LinkedIn">💼</span> LinkedIn
+                          </a>
+                        )}
+                        {user?.whatsapp && (
+                          <a href={`https://wa.me/${user.whatsapp.replace(/[^\d]/g, '')}`} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1 text-green-600 hover:underline">
+                            <span role="img" aria-label="WhatsApp">💬</span> WhatsApp
+                          </a>
+                        )}
+                        {user?.telegram && (
+                          <a href={`https://t.me/${user.telegram.replace(/^@/, '')}`} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1 text-blue-500 hover:underline">
+                            <span role="img" aria-label="Telegram">✈️</span> Telegram
+                          </a>
+                        )}
+                        {user?.website && (
+                          <a href={user.website} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1 text-gray-700 hover:underline">
+                            <span role="img" aria-label="Website">🌐</span> Website
+                          </a>
+                        )}
                       </div>
                     </div>
                   )}
