@@ -191,6 +191,15 @@ const ProfilePage = () => {
       locationInput: user.locationInput || '',
       role: user.role
     });
+    setSocialLinks({
+      facebook: user?.facebook || '',
+      instagram: user?.instagram || '',
+      twitter: user?.twitter || '',
+      linkedin: user?.linkedin || '',
+      whatsapp: user?.whatsapp || '',
+      telegram: user?.telegram || '',
+      website: user?.website || '',
+    });
     setIsEditing(false);
     setError('');
     setSuccess('');
@@ -211,6 +220,18 @@ const ProfilePage = () => {
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
           <p className="mt-4 text-gray-600">Loading profile...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Wait for user data to be fully loaded
+  if (!user.name || !user.email) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
+          <p className="mt-4 text-gray-600">Loading user data...</p>
         </div>
       </div>
     );

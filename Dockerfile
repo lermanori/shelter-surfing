@@ -27,6 +27,9 @@ WORKDIR /app/server
 # Generate Prisma client (schema path is relative to the new WORKDIR)
 RUN npx prisma generate
 
+# Run database migrations
+RUN npx prisma migrate deploy
+
 # Expose the port the server will run on
 EXPOSE 3000
 
