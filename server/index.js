@@ -60,6 +60,13 @@ const allowedOrigins = [
 
 if (process.env.CLIENT_URL) {
   allowedOrigins.push(process.env.CLIENT_URL);
+  // Also add the version without trailing slash if it has one
+  if (process.env.CLIENT_URL.endsWith('/')) {
+    allowedOrigins.push(process.env.CLIENT_URL.slice(0, -1));
+  } else {
+    // Add the version with trailing slash if it doesn't have one
+    allowedOrigins.push(process.env.CLIENT_URL + '/');
+  }
 }
 
 // Debug logging
