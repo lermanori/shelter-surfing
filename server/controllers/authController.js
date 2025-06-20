@@ -62,6 +62,13 @@ export const register = async (req, res) => {
         longitude: true,
         profileImage1: true,
         profileImage2: true,
+        facebook: true,
+        instagram: true,
+        twitter: true,
+        linkedin: true,
+        whatsapp: true,
+        telegram: true,
+        website: true,
         createdAt: true,
         updatedAt: true
       }
@@ -129,6 +136,13 @@ export const login = async (req, res) => {
       longitude: user.longitude,
       profileImage1: user.profileImage1,
       profileImage2: user.profileImage2,
+      facebook: user.facebook,
+      instagram: user.instagram,
+      twitter: user.twitter,
+      linkedin: user.linkedin,
+      whatsapp: user.whatsapp,
+      telegram: user.telegram,
+      website: user.website,
       createdAt: user.createdAt,
       updatedAt: user.updatedAt
     };
@@ -163,6 +177,13 @@ export const getCurrentUser = async (req, res) => {
         longitude: true,
         profileImage1: true,
         profileImage2: true,
+        facebook: true,
+        instagram: true,
+        twitter: true,
+        linkedin: true,
+        whatsapp: true,
+        telegram: true,
+        website: true,
         createdAt: true,
         updatedAt: true
       }
