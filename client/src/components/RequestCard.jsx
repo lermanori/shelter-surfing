@@ -138,7 +138,7 @@ const RequestCard = ({
             <span className={`badge ${getStatusColor(request.status)}`}>
               {request.status}
             </span>
-            <div className="text-xs text-secondary-500 flex items-center">
+            <div className="text-xs text-gray-500 flex items-center">
               <span className="mr-1">📅</span>
               Submitted {formatDate(request.createdAt)}
             </div>
@@ -146,46 +146,46 @@ const RequestCard = ({
 
           {/* Main Request Info - Similar to RequestInfo style */}
           <div className="flex items-center mb-6">
-            <div className="w-12 h-12 bg-gradient-primary rounded-xl flex items-center justify-center mr-4 shadow-soft border border-primary-600/20">
+            <div className="w-12 h-12 bg-gradient-to-r from-blue-500 to-blue-600 rounded-xl flex items-center justify-center mr-4 shadow-md border border-blue-600/20">
               <span className="text-white text-xl">
                 🏠
               </span>
             </div>
             <div>
-              <h3 className="text-xl font-bold text-secondary-900">Your Shelter Request</h3>
-              <p className="text-sm text-secondary-500">Status: {request.status}</p>
+              <h3 className="text-xl font-bold text-gray-900">Your Shelter Request</h3>
+              <p className="text-sm text-gray-500">Status: {request.status}</p>
             </div>
           </div>
 
           {/* Request Details - Styled like RequestInfo */}
-          <div className="text-sm text-secondary-700 space-y-4 pl-4 border-l-2 border-primary-200/50">
+          <div className="text-sm text-gray-700 space-y-4 pl-4 border-l-2 border-blue-200/50">
             <div className="flex items-center">
-              <span className="icon-container-primary mr-3">
-                <span className="text-primary-600 text-xs">📍</span>
+              <span className="icon-container bg-blue-100/80 text-blue-600 border-blue-200/50 mr-3">
+                <span className="text-blue-600 text-xs">📍</span>
               </span>
-              <p><span className="font-semibold text-secondary-500">Location:</span> {request.locationInput}</p>
+              <p><span className="font-semibold text-gray-500">Location:</span> {request.locationInput}</p>
             </div>
             <div className="flex items-center">
-              <span className="icon-container-success mr-3">
-                <span className="text-success-600 text-xs">📅</span>
+              <span className="icon-container bg-green-100/80 text-green-600 border-green-200/50 mr-3">
+                <span className="text-green-600 text-xs">📅</span>
               </span>
-              <p><span className="font-semibold text-secondary-500">Date Needed:</span> {formatDate(request.date)}</p>
+              <p><span className="font-semibold text-gray-500">Date Needed:</span> {formatDate(request.date)}</p>
             </div>
             <div className="flex items-center">
-              <span className="icon-container-secondary mr-3">
-                <span className="text-secondary-600 text-xs">👥</span>
+              <span className="icon-container bg-gray-100/80 text-gray-600 border-gray-200/50 mr-3">
+                <span className="text-gray-600 text-xs">👥</span>
               </span>
-              <p><span className="font-semibold text-secondary-500">People:</span> {request.numberOfPeople} {request.numberOfPeople === 1 ? 'person' : 'people'}</p>
+              <p><span className="font-semibold text-gray-500">People:</span> {request.numberOfPeople} {request.numberOfPeople === 1 ? 'person' : 'people'}</p>
             </div>
             {request.description && (
               <div className="pt-2">
                 <div className="flex items-start">
-                  <span className="icon-container-warning mr-3 mt-0.5">
-                    <span className="text-warning-600 text-xs">📝</span>
+                  <span className="icon-container bg-yellow-100/80 text-yellow-600 border-yellow-200/50 mr-3 mt-0.5">
+                    <span className="text-yellow-600 text-xs">📝</span>
                   </span>
                   <div>
-                    <p className="font-semibold text-secondary-500">Description:</p>
-                    <p className="text-secondary-600 pl-2 text-sm italic mt-1">"{request.description}"</p>
+                    <p className="font-semibold text-gray-500">Description:</p>
+                    <p className="text-gray-600 pl-2 text-sm italic mt-1">"{request.description}"</p>
                   </div>
                 </div>
               </div>
@@ -195,7 +195,7 @@ const RequestCard = ({
           {/* Tags */}
           {request.tags && request.tags.length > 0 && (
             <div className="mt-6">
-              <p className="font-semibold text-secondary-500 text-sm mb-3">Tags:</p>
+              <p className="font-semibold text-gray-500 text-sm mb-3">Tags:</p>
               <div className="flex flex-wrap gap-2">
                 {request.tags.slice(0, 3).map((tag, index) => (
                   <span
@@ -216,7 +216,7 @@ const RequestCard = ({
 
           {/* Action Buttons */}
           {showActions && (
-            <div className="flex space-x-3 mt-6 pt-4 border-t border-secondary-200/50">
+            <div className="flex space-x-3 mt-6 pt-4 border-t border-gray-200/50">
               <button
                 onClick={handleEdit}
                 className="btn-outline flex-1"
@@ -254,10 +254,10 @@ const RequestCard = ({
           </div>
 
           {/* Request Description */}
-          <h3 className="text-lg font-semibold text-secondary-900 mb-2">
+          <h3 className="text-lg font-semibold text-gray-900 mb-2">
             Shelter Request
           </h3>
-          <p className="text-secondary-600 text-sm mb-3 line-clamp-2">
+          <p className="text-gray-600 text-sm mb-3 line-clamp-2">
             {request.description || `Need shelter for ${request.numberOfPeople} ${request.numberOfPeople === 1 ? 'person' : 'people'} on ${formatDate(request.date)}`}
           </p>
 
@@ -293,8 +293,8 @@ const RequestCard = ({
                 </div>
               )}
               <div>
-                <p className="text-sm font-medium text-secondary-900">{request.seeker.name}</p>
-                <p className="text-xs text-secondary-500">{request.seeker.locationInput}</p>
+                <p className="text-sm font-medium text-gray-900">{request.seeker.name}</p>
+                <p className="text-xs text-gray-500">{request.seeker.locationInput}</p>
               </div>
             </div>
           )}
@@ -302,23 +302,23 @@ const RequestCard = ({
           {/* Request Details */}
           <div className="space-y-2 mb-4">
             <div className="flex justify-between text-sm">
-              <span className="text-secondary-500">Number of People:</span>
-              <span className="font-medium text-secondary-900">{request.numberOfPeople} {request.numberOfPeople === 1 ? 'person' : 'people'}</span>
+              <span className="text-gray-500">Number of People:</span>
+              <span className="font-medium text-gray-900">{request.numberOfPeople} {request.numberOfPeople === 1 ? 'person' : 'people'}</span>
             </div>
             
             <div className="flex justify-between text-sm">
-              <span className="text-secondary-500">Date Needed:</span>
-              <span className="font-medium text-secondary-900">{formatDate(request.date)}</span>
+              <span className="text-gray-500">Date Needed:</span>
+              <span className="font-medium text-gray-900">{formatDate(request.date)}</span>
             </div>
             
             <div className="flex justify-between text-sm">
-              <span className="text-secondary-500">Location:</span>
-              <span className="font-medium text-secondary-900">{request.locationInput}</span>
+              <span className="text-gray-500">Location:</span>
+              <span className="font-medium text-gray-900">{request.locationInput}</span>
             </div>
 
             <div className="flex justify-between text-sm">
-              <span className="text-secondary-500">Submitted:</span>
-              <span className="font-medium text-secondary-900">{formatDate(request.createdAt)}</span>
+              <span className="text-gray-500">Submitted:</span>
+              <span className="font-medium text-gray-900">{formatDate(request.createdAt)}</span>
             </div>
           </div>
 
@@ -352,7 +352,7 @@ const RequestCard = ({
                   <button
                     onClick={handleMessage}
                     disabled={getActionButtonDisabled()}
-                    className={status === 'PENDING' ? 'btn-secondary flex-1 opacity-50 cursor-not-allowed' : 'btn-success flex-1'}
+                    className={getActionButtonClass()}
                   >
                     {getActionButtonText()}
                   </button>
