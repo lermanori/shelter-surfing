@@ -95,7 +95,7 @@ const ShelterCard = ({
           <div className="mb-6">
             <div className="flex space-x-3 overflow-x-auto">
               {shelter.image1 && (
-                <div className="flex-shrink-0 w-40 h-28 rounded-lg overflow-hidden shadow-soft">
+                <div className="flex-shrink-0 w-40 h-28 rounded-lg overflow-hidden shadow-md">
                   <img
                     src={shelter.image1}
                     alt={`${shelter.title} - Image 1`}
@@ -104,7 +104,7 @@ const ShelterCard = ({
                 </div>
               )}
               {shelter.image2 && (
-                <div className="flex-shrink-0 w-40 h-28 rounded-lg overflow-hidden shadow-soft">
+                <div className="flex-shrink-0 w-40 h-28 rounded-lg overflow-hidden shadow-md">
                   <img
                     src={shelter.image2}
                     alt={`${shelter.title} - Image 2`}
@@ -120,14 +120,14 @@ const ShelterCard = ({
         <div className="flex items-center justify-between mb-6">
           {/* Host Information */}
           <div className="flex items-center">
-            <div className="w-12 h-12 bg-gradient-primary rounded-xl flex items-center justify-center mr-4 shadow-soft border border-primary-600/20">
+            <div className="w-12 h-12 bg-gradient-to-r from-blue-500 to-blue-600 rounded-xl flex items-center justify-center mr-4 shadow-md border border-blue-600/20">
               <span className="text-white font-bold text-lg">
                 {shelter.host?.name?.charAt(0).toUpperCase() || 'H'}
               </span>
             </div>
             <div>
-              <p className="text-sm font-semibold text-secondary-900">{shelter.host?.name || 'Host'}</p>
-              <p className="text-xs text-secondary-500 flex items-center">
+              <p className="text-sm font-semibold text-gray-900">{shelter.host?.name || 'Host'}</p>
+              <p className="text-xs text-gray-500 flex items-center">
                 <span className="mr-1">📍</span>
                 {shelter.locationInput}
               </p>
@@ -146,50 +146,50 @@ const ShelterCard = ({
         <div className="space-y-4">
           {/* Title and Description */}
           <div>
-            <h3 className="text-xl font-bold text-secondary-900 mb-3">
+            <h3 className="text-xl font-bold text-gray-900 mb-3">
               {shelter.title}
             </h3>
-            <p className="text-secondary-600 text-sm leading-relaxed">
+            <p className="text-gray-600 text-sm leading-relaxed">
               {shelter.description}
             </p>
           </div>
 
           {/* Key Details Grid */}
-          <div className="grid grid-cols-2 gap-4 py-4 border-t border-b border-secondary-200/50">
+          <div className="grid grid-cols-2 gap-4 py-4 border-t border-b border-gray-200/50">
             <div className="flex items-center">
-              <span className="icon-container icon-container-primary mr-3">
-                <span className="text-primary-600 text-sm">📅</span>
+              <span className="icon-container bg-blue-100/80 text-blue-600 border-blue-200/50 mr-3">
+                <span className="text-blue-600 text-sm">📅</span>
               </span>
               <div>
-                <p className="text-xs text-secondary-500 mb-1">Available From</p>
-                <p className="text-sm font-medium text-secondary-900">{formatDate(shelter.availableFrom)}</p>
+                <p className="text-xs text-gray-500 mb-1">Available From</p>
+                <p className="text-sm font-medium text-gray-900">{formatDate(shelter.availableFrom)}</p>
               </div>
             </div>
             <div className="flex items-center">
-              <span className="icon-container icon-container-success mr-3">
-                <span className="text-success-600 text-sm">📅</span>
+              <span className="icon-container bg-green-100/80 text-green-600 border-green-200/50 mr-3">
+                <span className="text-green-600 text-sm">📅</span>
               </span>
               <div>
-                <p className="text-xs text-secondary-500 mb-1">Available Until</p>
-                <p className="text-sm font-medium text-secondary-900">{shelter.availableTo ? formatDate(shelter.availableTo) : 'Ongoing'}</p>
+                <p className="text-xs text-gray-500 mb-1">Available Until</p>
+                <p className="text-sm font-medium text-gray-900">{shelter.availableTo ? formatDate(shelter.availableTo) : 'Ongoing'}</p>
               </div>
             </div>
             <div className="flex items-center">
-              <span className="icon-container icon-container-secondary mr-3">
-                <span className="text-secondary-600 text-sm">👥</span>
+              <span className="icon-container bg-gray-100/80 text-gray-600 border-gray-200/50 mr-3">
+                <span className="text-gray-600 text-sm">👥</span>
               </span>
               <div>
-                <p className="text-xs text-secondary-500 mb-1">Capacity</p>
-                <p className="text-sm font-medium text-secondary-900">{shelter.capacity} people</p>
+                <p className="text-xs text-gray-500 mb-1">Capacity</p>
+                <p className="text-sm font-medium text-gray-900">{shelter.capacity} people</p>
               </div>
             </div>
             <div className="flex items-center">
-              <span className="icon-container icon-container-warning mr-3">
-                <span className="text-warning-600 text-sm">📍</span>
+              <span className="icon-container bg-yellow-100/80 text-yellow-600 border-yellow-200/50 mr-3">
+                <span className="text-yellow-600 text-sm">📍</span>
               </span>
               <div>
-                <p className="text-xs text-secondary-500 mb-1">Location</p>
-                <p className="text-sm font-medium text-secondary-900">{shelter.locationInput}</p>
+                <p className="text-xs text-gray-500 mb-1">Location</p>
+                <p className="text-sm font-medium text-gray-900">{shelter.locationInput}</p>
               </div>
             </div>
           </div>
