@@ -32,15 +32,15 @@ const RequestCard = ({
   const getStatusColor = (status) => {
     switch (status) {
       case 'PENDING':
-        return 'bg-yellow-100 text-yellow-800';
+        return 'badge-warning';
       case 'APPROVED':
-        return 'bg-green-100 text-green-800';
+        return 'badge-success';
       case 'REJECTED':
-        return 'bg-red-100 text-red-800';
+        return 'badge-danger';
       case 'COMPLETED':
-        return 'bg-blue-100 text-blue-800';
+        return 'badge-primary';
       default:
-        return 'bg-gray-100 text-gray-800';
+        return 'badge-secondary';
     }
   };
 
@@ -132,39 +132,62 @@ const RequestCard = ({
   if (!showDistance && !showSeekerInfo) {
     return (
       <>
-        <div className="bg-white shadow-lg rounded-xl p-6 border border-gray-200 hover:shadow-xl transition-shadow">
+        <div className="card card-hover p-6">
           {/* Status and Distance */}
           <div className="flex items-center justify-between mb-6">
-            <span className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${getStatusColor(request.status)}`}>
+            <span className={`badge ${getStatusColor(request.status)}`}>
               {request.status}
             </span>
-            <div className="text-xs text-gray-500">
+            <div className="text-xs text-secondary-500 flex items-center">
+              <span className="mr-1">📅</span>
               Submitted {formatDate(request.createdAt)}
             </div>
           </div>
 
           {/* Main Request Info - Similar to RequestInfo style */}
           <div className="flex items-center mb-6">
-            <div className="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center mr-4 shadow-sm">
-              <span className="text-xl font-bold text-blue-600">
+            <div className="w-12 h-12 bg-gradient-primary rounded-xl flex items-center justify-center mr-4 shadow-soft border border-primary-600/20">
+              <span className="text-white text-xl">
                 🏠
               </span>
             </div>
             <div>
-              <h3 className="text-xl font-bold text-blue-900">Your Shelter Request</h3>
-              <p className="text-sm text-gray-500">Status: {request.status}</p>
+              <h3 className="text-xl font-bold text-secondary-900">Your Shelter Request</h3>
+              <p className="text-sm text-secondary-500">Status: {request.status}</p>
             </div>
           </div>
 
           {/* Request Details - Styled like RequestInfo */}
-          <div className="text-sm text-gray-700 space-y-3 pl-4 border-l-2 border-blue-100">
-            <p><span className="font-semibold text-gray-500">Location:</span> {request.locationInput}</p>
-            <p><span className="font-semibold text-gray-500">Date Needed:</span> {formatDate(request.date)}</p>
-            <p><span className="font-semibold text-gray-500">People:</span> {request.numberOfPeople} {request.numberOfPeople === 1 ? 'person' : 'people'}</p>
+          <div className="text-sm text-secondary-700 space-y-4 pl-4 border-l-2 border-primary-200/50">
+            <div className="flex items-center">
+              <span className="icon-container-primary mr-3">
+                <span className="text-primary-600 text-xs">📍</span>
+              </span>
+              <p><span className="font-semibold text-secondary-500">Location:</span> {request.locationInput}</p>
+            </div>
+            <div className="flex items-center">
+              <span className="icon-container-success mr-3">
+                <span className="text-success-600 text-xs">📅</span>
+              </span>
+              <p><span className="font-semibold text-secondary-500">Date Needed:</span> {formatDate(request.date)}</p>
+            </div>
+            <div className="flex items-center">
+              <span className="icon-container-secondary mr-3">
+                <span className="text-secondary-600 text-xs">👥</span>
+              </span>
+              <p><span className="font-semibold text-secondary-500">People:</span> {request.numberOfPeople} {request.numberOfPeople === 1 ? 'person' : 'people'}</p>
+            </div>
             {request.description && (
               <div className="pt-2">
-                <p className="font-semibold text-gray-500">Description:</p>
-                <p className="text-gray-600 pl-2 text-sm italic mt-1">"{request.description}"</p>
+                <div className="flex items-start">
+                  <span className="icon-container-warning mr-3 mt-0.5">
+                    <span className="text-warning-600 text-xs">📝</span>
+                  </span>
+                  <div>
+                    <p className="font-semibold text-secondary-500">Description:</p>
+                    <p className="text-secondary-600 pl-2 text-sm italic mt-1">"{request.description}"</p>
+                  </div>
+                </div>
               </div>
             )}
           </div>
@@ -172,18 +195,18 @@ const RequestCard = ({
           {/* Tags */}
           {request.tags && request.tags.length > 0 && (
             <div className="mt-6">
-              <p className="font-semibold text-gray-500 text-sm mb-2">Tags:</p>
+              <p className="font-semibold text-secondary-500 text-sm mb-3">Tags:</p>
               <div className="flex flex-wrap gap-2">
                 {request.tags.slice(0, 3).map((tag, index) => (
                   <span
                     key={index}
-                    className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800"
+                    className="badge badge-primary"
                   >
                     {tag.replace('-', ' ')}
                   </span>
                 ))}
                 {request.tags.length > 3 && (
-                  <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
+                  <span className="badge badge-secondary">
                     +{request.tags.length - 3} more
                   </span>
                 )}
@@ -193,31 +216,22 @@ const RequestCard = ({
 
           {/* Action Buttons */}
           {showActions && (
-            <div className="flex space-x-3 mt-6 pt-4 border-t border-gray-100">
+            <div className="flex space-x-3 mt-6 pt-4 border-t border-secondary-200/50">
               <button
                 onClick={handleEdit}
-                className="flex-1 bg-blue-600 text-white px-4 py-3 rounded-lg hover:bg-blue-700 transition-colors font-medium text-sm"
+                className="btn-outline flex-1"
               >
                 Edit Request
               </button>
               <button
                 onClick={handleDelete}
-                className="flex-1 bg-red-600 text-white px-4 py-3 rounded-lg hover:bg-red-700 transition-colors font-medium text-sm"
+                className="btn-danger-outline flex-1"
               >
                 Delete Request
               </button>
             </div>
           )}
         </div>
-
-        {/* Connection Request Modal */}
-        <ConnectionRequestModal
-          isOpen={showConnectionModal}
-          onClose={() => setShowConnectionModal(false)}
-          recipientId={request.seeker?.id}
-          recipientName={request.seeker?.name}
-          onSuccess={handleConnectionSuccess}
-        />
       </>
     );
   }
@@ -225,25 +239,25 @@ const RequestCard = ({
   // Original card design for matches page and other contexts
   return (
     <>
-      <div className="bg-white shadow rounded-lg overflow-hidden border border-gray-200 hover:shadow-md transition-shadow">
-        <div className="p-6">
+      <div className="card card-hover p-6">
+        <div className="">
           {/* Status and Distance */}
           <div className="flex items-center justify-between mb-4">
-            <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getStatusColor(request.status)}`}>
+            <span className={`badge ${getStatusColor(request.status)}`}>
               {request.status}
             </span>
             {showDistance && (request.distance === 0 || request.distance) && (
-              <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getDistanceColor(request.distance)} bg-gray-100`}>
+              <span className={`badge ${getDistanceColor(request.distance).includes('green') ? 'badge-success' : getDistanceColor(request.distance).includes('yellow') ? 'badge-warning' : 'badge-danger'}`}>
                 {getDistanceIcon(request.distance)} {request.distance} km away
               </span>
             )}
           </div>
 
           {/* Request Description */}
-          <h3 className="text-lg font-semibold text-gray-900 mb-2">
+          <h3 className="text-lg font-semibold text-secondary-900 mb-2">
             Shelter Request
           </h3>
-          <p className="text-gray-600 text-sm mb-3 line-clamp-2">
+          <p className="text-secondary-600 text-sm mb-3 line-clamp-2">
             {request.description || `Need shelter for ${request.numberOfPeople} ${request.numberOfPeople === 1 ? 'person' : 'people'} on ${formatDate(request.date)}`}
           </p>
 
@@ -253,7 +267,7 @@ const RequestCard = ({
               {(request.seeker.profileImage1 || request.seeker.profileImage2) ? (
                 <div className="flex space-x-2 mr-3">
                   {request.seeker.profileImage1 && (
-                    <div className="w-8 h-8 rounded-full overflow-hidden">
+                    <div className="w-8 h-8 rounded-xl overflow-hidden shadow-soft">
                       <img
                         src={request.seeker.profileImage1}
                         alt={`${request.seeker.name} - Profile 1`}
@@ -262,7 +276,7 @@ const RequestCard = ({
                     </div>
                   )}
                   {request.seeker.profileImage2 && (
-                    <div className="w-8 h-8 rounded-full overflow-hidden">
+                    <div className="w-8 h-8 rounded-xl overflow-hidden shadow-soft">
                       <img
                         src={request.seeker.profileImage2}
                         alt={`${request.seeker.name} - Profile 2`}
@@ -272,15 +286,15 @@ const RequestCard = ({
                   )}
                 </div>
               ) : (
-                <div className="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center mr-3">
-                  <span className="text-sm font-bold text-green-600">
+                <div className="w-8 h-8 bg-gradient-primary rounded-xl flex items-center justify-center mr-3 border border-primary-600/20">
+                  <span className="text-sm font-bold text-white">
                     {request.seeker.name.charAt(0).toUpperCase()}
                   </span>
                 </div>
               )}
               <div>
-                <p className="text-sm font-medium text-gray-900">{request.seeker.name}</p>
-                <p className="text-xs text-gray-500">{request.seeker.locationInput}</p>
+                <p className="text-sm font-medium text-secondary-900">{request.seeker.name}</p>
+                <p className="text-xs text-secondary-500">{request.seeker.locationInput}</p>
               </div>
             </div>
           )}
@@ -288,23 +302,23 @@ const RequestCard = ({
           {/* Request Details */}
           <div className="space-y-2 mb-4">
             <div className="flex justify-between text-sm">
-              <span className="text-gray-500">Number of People:</span>
-              <span className="font-medium">{request.numberOfPeople} {request.numberOfPeople === 1 ? 'person' : 'people'}</span>
+              <span className="text-secondary-500">Number of People:</span>
+              <span className="font-medium text-secondary-900">{request.numberOfPeople} {request.numberOfPeople === 1 ? 'person' : 'people'}</span>
             </div>
             
             <div className="flex justify-between text-sm">
-              <span className="text-gray-500">Date Needed:</span>
-              <span className="font-medium">{formatDate(request.date)}</span>
+              <span className="text-secondary-500">Date Needed:</span>
+              <span className="font-medium text-secondary-900">{formatDate(request.date)}</span>
             </div>
             
             <div className="flex justify-between text-sm">
-              <span className="text-gray-500">Location:</span>
-              <span className="font-medium">{request.locationInput}</span>
+              <span className="text-secondary-500">Location:</span>
+              <span className="font-medium text-secondary-900">{request.locationInput}</span>
             </div>
 
             <div className="flex justify-between text-sm">
-              <span className="text-gray-500">Submitted:</span>
-              <span className="font-medium">{formatDate(request.createdAt)}</span>
+              <span className="text-secondary-500">Submitted:</span>
+              <span className="font-medium text-secondary-900">{formatDate(request.createdAt)}</span>
             </div>
           </div>
 
@@ -315,13 +329,13 @@ const RequestCard = ({
                 {request.tags.slice(0, 3).map((tag, index) => (
                   <span
                     key={index}
-                    className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800"
+                    className="badge badge-success"
                   >
                     {tag.replace('-', ' ')}
                   </span>
                 ))}
                 {request.tags.length > 3 && (
-                  <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
+                  <span className="badge badge-secondary">
                     +{request.tags.length - 3} more
                   </span>
                 )}
@@ -338,13 +352,13 @@ const RequestCard = ({
                   <button
                     onClick={handleMessage}
                     disabled={getActionButtonDisabled()}
-                    className={getActionButtonClass()}
+                    className={status === 'PENDING' ? 'btn-secondary flex-1 opacity-50 cursor-not-allowed' : 'btn-success flex-1'}
                   >
                     {getActionButtonText()}
                   </button>
                   <button
                     onClick={handleViewDetails}
-                    className="flex-1 bg-gray-100 text-gray-700 px-3 py-2 rounded-md hover:bg-gray-200 transition-colors text-sm font-medium"
+                    className="btn-secondary flex-1"
                   >
                     Details
                   </button>
@@ -354,13 +368,13 @@ const RequestCard = ({
                 <>
                   <button
                     onClick={handleEdit}
-                    className="flex-1 bg-blue-600 text-white px-3 py-2 rounded-md hover:bg-blue-700 transition-colors text-sm font-medium"
+                    className="btn-primary flex-1"
                   >
                     Edit
                   </button>
                   <button
                     onClick={handleDelete}
-                    className="flex-1 bg-red-600 text-white px-3 py-2 rounded-md hover:bg-red-700 transition-colors text-sm font-medium"
+                    className="btn-danger-outline flex-1"
                   >
                     Delete
                   </button>

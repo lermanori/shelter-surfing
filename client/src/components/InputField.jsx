@@ -14,7 +14,7 @@ const InputField = ({
   return (
     <div className={className}>
       {label && (
-        <label htmlFor={name} className="block text-sm font-medium text-gray-700 mb-1">
+        <label htmlFor={name} className="block text-sm font-medium text-gray-700 mb-2">
           {label} {required && <span className="text-red-500">*</span>}
         </label>
       )}
@@ -26,13 +26,16 @@ const InputField = ({
         onChange={onChange}
         placeholder={placeholder}
         disabled={disabled}
-        className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-          error ? 'border-red-500' : 'border-gray-300'
-        } ${disabled ? 'bg-gray-50 cursor-not-allowed' : ''}`}
+        className={`input-field ${
+          error ? 'border-red-500 focus:ring-red-500 focus:border-red-500' : ''
+        }`}
         {...props}
       />
       {error && (
-        <p className="mt-1 text-sm text-red-600">{error}</p>
+        <p className="mt-2 text-sm text-red-600 flex items-center">
+          <span className="mr-1">⚠</span>
+          {error}
+        </p>
       )}
     </div>
   );

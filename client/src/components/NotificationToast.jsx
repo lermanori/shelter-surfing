@@ -48,14 +48,15 @@ const NotificationToast = () => {
 
   const getNotificationColor = (type) => {
     switch (type) {
-      case 'new_message':
-        return 'bg-blue-500';
-      case 'connection_request':
-        return 'bg-green-500';
-      case 'connection_update':
-        return 'bg-purple-500';
+      case 'success':
+        return 'notification-success';
+      case 'error':
+        return 'notification-error';
+      case 'warning':
+        return 'notification-warning';
+      case 'info':
       default:
-        return 'bg-gray-500';
+        return 'notification-info';
     }
   };
 
@@ -68,7 +69,7 @@ const NotificationToast = () => {
       {visibleNotifications.map((notification) => (
         <div
           key={notification.id}
-          className={`${getNotificationColor(notification.type)} text-white px-4 py-3 rounded-lg shadow-lg max-w-sm transform transition-all duration-300 ease-in-out`}
+          className={`${getNotificationColor(notification.type)} text-white px-4 py-3 rounded-xl shadow-large max-w-sm transform transition-all duration-300 ease-in-out animate-slide-down`}
         >
           <div className="flex items-start space-x-3">
             <div className="flex-shrink-0 text-lg">
@@ -84,7 +85,7 @@ const NotificationToast = () => {
             </div>
             <button
               onClick={() => handleClose(notification.id)}
-              className="flex-shrink-0 text-white hover:text-gray-200 transition-colors"
+              className="flex-shrink-0 text-white/80 hover:text-white transition-colors duration-300 p-1 rounded-lg hover:bg-white/10"
             >
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
