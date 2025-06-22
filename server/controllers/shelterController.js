@@ -106,7 +106,8 @@ const createShelter = async (req, res) => {
     });
 
     // Validate required fields
-    if (!title || !description || !locationInput || !availableFrom || !capacity) {
+    const hasLocation = locationInput || (latitude !== undefined && longitude !== undefined);
+    if (!title || !description || !hasLocation || !availableFrom || !capacity) {
       return res.status(400).json({ error: 'Missing required fields' });
     }
 

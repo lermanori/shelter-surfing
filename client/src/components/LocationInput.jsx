@@ -28,7 +28,7 @@ const LocationInput = ({
     isLoading: gpsLoading,
     permissionStatus,
     isSupported,
-    getCurrentLocation,
+    getLocationWithAddress,
     clearLocation
   } = useGPSLocation();
 
@@ -40,67 +40,20 @@ const LocationInput = ({
   // Handle GPS location changes
   useEffect(() => {
     if (gpsLocation) {
-      // Try to get a readable address from coordinates
-      getAddressFromCoordinates(gpsLocation.latitude, gpsLocation.longitude);
-    }
-  }, [gpsLocation]);
-
-  // Get address from coordinates using reverse geocoding
-  const getAddressFromCoordinates = async (lat, lng) => {
-    try {
-      // Using OpenStreetMap Nominatim API (free, no API key required)
-      const response = await fetch(
-        `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&zoom=10&accept-language=he,en`
-      );
-      
-      if (response.ok) {
-        const data = await response.json();
-        const address = data.display_name || `${lat.toFixed(6)}, ${lng.toFixed(6)}`;
-        setGpsAddress(address);
-        
-        // Auto-fill the input with GPS location
-        setInputValue(address);
-        if (onChange) onChange(address);
-        if (onLocationSelect) {
-          onLocationSelect({
-            locationInput: address,
-            latitude: lat,
-            longitude: lng,
-            source: 'gps'
-          });
-        }
-      } else {
-        // Fallback to coordinates
-        const address = `${lat.toFixed(6)}, ${lng.toFixed(6)}`;
-        setGpsAddress(address);
-        setInputValue(address);
-        if (onChange) onChange(address);
-        if (onLocationSelect) {
-          onLocationSelect({
-            locationInput: address,
-            latitude: lat,
-            longitude: lng,
-            source: 'gps'
-          });
-        }
-      }
-    } catch (error) {
-      console.error('Error getting address from coordinates:', error);
-      // Fallback to coordinates
-      const address = `${lat.toFixed(6)}, ${lng.toFixed(6)}`;
-      setGpsAddress(address);
-      setInputValue(address);
-      if (onChange) onChange(address);
+      // The new hook now returns the address directly
+      setGpsAddress(gpsLocation.address);
+      setInputValue(gpsLocation.address);
+      if (onChange) onChange(gpsLocation.address);
       if (onLocationSelect) {
         onLocationSelect({
-          locationInput: address,
-          latitude: lat,
-          longitude: lng,
+          locationInput: gpsLocation.address,
+          latitude: gpsLocation.latitude,
+          longitude: gpsLocation.longitude,
           source: 'gps'
         });
       }
     }
-  };
+  }, [gpsLocation]);
 
   // Handle input changes
   const handleInputChange = (e) => {
@@ -141,7 +94,7 @@ const LocationInput = ({
   };
 
   // Handle GPS button click
-  const handleGPSClick = () => {
+  const handleGPSClick = async () => {
     if (gpsLoading) return;
     
     if (gpsLocation) {
@@ -152,8 +105,14 @@ const LocationInput = ({
       if (onChange) onChange('');
       if (onLocationSelect) onLocationSelect(null);
     } else {
-      // Get GPS location
-      getCurrentLocation();
+      // Get GPS location and address
+      try {
+        await getLocationWithAddress();
+        // The useEffect hook above will handle the result
+      } catch (error) {
+        console.error("Error getting GPS location with address:", error);
+        // The hook will set its own error state, which can be displayed to the user
+      }
     }
   };
 

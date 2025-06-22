@@ -21,12 +21,21 @@ const ShelterForm = ({ initialData, onSubmit, isEditing = false }) => {
   });
 
   const handleLocationSelect = (location) => {
-    setFormData(prev => ({
-      ...prev,
-      locationInput: location.description,
-      latitude: location.latitude,
-      longitude: location.longitude
-    }));
+    if (location) {
+      setFormData(prev => ({
+        ...prev,
+        locationInput: location.address || location.locationInput,
+        latitude: location.latitude,
+        longitude: location.longitude
+      }));
+    } else {
+      setFormData(prev => ({
+        ...prev,
+        locationInput: '',
+        latitude: null,
+        longitude: null
+      }));
+    }
   };
 
   const handleImageUpload = async (file, imageNum) => {
